@@ -53,11 +53,32 @@ export const feedService = {
         return data
     },
 
-    async searchFeed(query: string, cursor?: string | null): Promise<FeedResponse> {
+    async searchFeed(query: string, cursor?: string | null, filters?: {
+        category_id?: string,
+        min_price?: number,
+        max_price?: number,
+        condition?: 'new' | 'used',
+        location?: string
+    }): Promise<FeedResponse> {
         const params = new URLSearchParams()
         params.append('q', query)
         if (cursor) {
             params.append('cursor', cursor)
+        }
+        if (filters?.category_id) {
+            params.append('category_id', filters.category_id)
+        }
+        if (filters?.min_price) {
+            params.append('min_price', filters.min_price.toString())
+        }
+        if (filters?.max_price) {
+            params.append('max_price', filters.max_price.toString())
+        }
+        if (filters?.condition) {
+            params.append('condition', filters.condition)
+        }
+        if (filters?.location) {
+            params.append('location', filters.location)
         }
         const { data } = await api.get<FeedResponse>(`/feed/search?${params.toString()}`)
         return data
@@ -73,5 +94,18 @@ export const feedService = {
 
     async toggleSave(listingId: string): Promise<void> {
         await api.post(`/listings/${listingId}/save`)
+    },
+
+    async addToCart(listingId: string, quantity: number = 1): Promise<void> {
+        await api.post('/cart', { listing_id: listingId, quantity })
+    },
+
+    async getSaves(cursor?: string | null): Promise<FeedResponse> {
+        const params = new URLSearchParams()
+        if (cursor) {
+            params.append('cursor', cursor)
+        }
+        const { data } = await api.get<FeedResponse>(`/saves?${params.toString()}`)
+        return data
     }
 }

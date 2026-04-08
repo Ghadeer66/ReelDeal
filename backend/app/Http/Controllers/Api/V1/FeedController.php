@@ -27,12 +27,21 @@ class FeedController extends Controller
     public function search(Request $request)
     {
         $searchTerm = $request->input('q', '');
-        if (empty($searchTerm)) {
+        $perPage = $request->input('limit', 5);
+        $filters = [
+            'category_id' => $request->input('category_id'),
+            'min_price' => $request->input('min_price'),
+            'max_price' => $request->input('max_price'),
+            'condition' => $request->input('condition'),
+            'location' => $request->input('location'),
+        ];
+
+        // If no search term and no filters, returned empty or trending
+        if (empty($searchTerm) && empty(array_filter($filters))) {
             return response()->json(['data' => []]);
         }
 
-        $perPage = $request->input('limit', 5);
-        $reels = $this->feedService->searchReels($searchTerm, $perPage);
+        $reels = $this->feedService->searchReels($searchTerm, $perPage, $filters);
 
         return ListingFeedResource::collection($reels);
     }

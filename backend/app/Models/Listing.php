@@ -27,6 +27,7 @@ class Listing extends Model
         'description_ar',
         'price',
         'currency',
+        'location',
         'condition',
         'seller_type',
         'status',

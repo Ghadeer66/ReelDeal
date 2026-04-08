@@ -62,6 +62,16 @@ class User extends Authenticatable
         return $this->hasMany(Save::class);
     }
 
+    public function savedListings()
+    {
+        return $this->belongsToMany(Listing::class, 'saves', 'user_id', 'listing_id');
+    }
+
+    public function cartItems()
+    {
+        return $this->hasMany(CartItem::class);
+    }
+
     public function interests()
     {
         return $this->hasMany(UserInterest::class);

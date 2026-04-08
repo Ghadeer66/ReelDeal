@@ -1,5 +1,5 @@
 <template>
-  <div class="h-screen w-full bg-black overflow-hidden flex flex-col pt-14 lg:pt-0">
+  <div class="h-full w-full bg-black overflow-hidden flex flex-col pt-14 lg:pt-0">
     
     <!-- Header overlay for mobile -->
     <div class="absolute top-0 left-0 w-full z-20 flex justify-center py-4 pointer-events-none">
@@ -12,7 +12,7 @@
     
     <!-- Scrollable container -->
     <div 
-      class="h-full w-full overflow-y-scroll snap-y snap-mandatory scroll-smooth hide-scrollbar flex flex-col"
+      class="h-full w-full overflow-y-scroll snap-y snap-mandatory scroll-smooth hide-scrollbar flex flex-col pb-16"
       @scroll="handleScroll"
       ref="scrollContainer"
     >

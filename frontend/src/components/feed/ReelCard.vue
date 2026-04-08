@@ -26,54 +26,66 @@
     </div>
 
     <!-- UI Overlay Layer -->
-    <div class="absolute inset-0 z-10 flex flex-col justify-end p-4 pointer-events-none">
-      
-      <div class="flex justify-between items-end">
-        <!-- Info details (Bottom Left) -->
-        <div class="flex-1 pr-12 pointer-events-auto">
-          <div class="flex items-center space-x-2 mb-3">
-            <img 
-              :src="listing.user.avatar_url || 'https://ui-avatars.com/api/?name=' + listing.user.name" 
-              class="w-10 h-10 rounded-full border-2 border-green-400"
-            />
-            <span class="text-white font-bold drop-shadow-md">@{{ listing.user.name }}</span>
+    <div class="absolute inset-0 z-10 pointer-events-none bg-gradient-to-t from-black/95 via-transparent to-black/30">
+      <div class="flex flex-col justify-end w-full h-full p-6 pb-24 pointer-events-auto max-w-lg mx-auto">
+        <div class="flex justify-between items-end w-full">
+          <!-- Info details (Bottom Left) -->
+          <div class="flex flex-col items-start w-full text-white">
+            <div class="flex items-center space-x-2 mb-4">
+              <img 
+                :src="listing.user.avatar_url || 'https://ui-avatars.com/api/?name=' + listing.user.name" 
+                class="w-9 h-9 rounded-full border-2 border-primary"
+              />
+              <span class="text-white font-bold text-sm drop-shadow-md">@{{ listing.user.name }}</span>
+            </div>
+            
+            <h3 class="text-xl font-extrabold leading-tight mb-1 drop-shadow-xl">{{ listing.title_en }}</h3>
+            <p class="text-primary font-black text-2xl mb-4 drop-shadow-xl">{{ listing.price }} {{ listing.currency }}</p>
+            <p class="text-white/60 text-xs line-clamp-2 mb-6 max-w-[85%] leading-relaxed drop-shadow-md">{{ listing.description_en }}</p>
+            
+            <button @click="handleAddToCart" class="w-full bg-primary text-primary-foreground py-3.5 rounded-xl font-bold text-sm shadow-xl shadow-primary/10 flex items-center justify-center transition-transform active:scale-95">
+                + Add to cart
+            </button>
           </div>
-          
-          <h3 class="text-white font-bold text-lg leading-tight mb-1 drop-shadow-md">{{ listing.title_en }}</h3>
-          <p class="text-gray-200 text-sm line-clamp-2 mb-2 drop-shadow-md">{{ listing.description_en }}</p>
-          
-          <div class="inline-flex items-center px-3 py-1 bg-green-500 rounded-full text-black font-bold text-sm">
-            {{ listing.price }} {{ listing.currency }}
+
+          <!-- Side Actions (Right) -->
+          <div class="absolute bottom-32 right-4 flex flex-col items-center space-y-5">
+            <button @click="handleLike" class="flex flex-col items-center group">
+              <div class="p-3 bg-white/10 backdrop-blur-md border border-white/5 rounded-full transition-all group-hover:bg-white/20 group-hover:scale-110 active:scale-90" :class="{'text-red-500 bg-red-500/10': isLiked, 'text-white': !isLiked}">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transition-colors" :class="{'fill-red-500 stroke-0': isLiked}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                </svg>
+              </div>
+              <span class="text-white/50 text-[10px] font-bold mt-1.5 uppercase tracking-tighter">{{ listing.likes_count }}</span>
+            </button>
+
+            <button @click="handleSave" class="flex flex-col items-center group">
+              <div class="p-3 bg-white/10 backdrop-blur-md border border-white/5 rounded-full transition-all group-hover:bg-white/20 group-hover:scale-110 active:scale-90" :class="{'text-primary bg-primary/10': isSaved, 'text-white': !isSaved}">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transition-colors" :class="{'fill-primary stroke-0': isSaved}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                </svg>
+              </div>
+              <span class="text-white/50 text-[10px] font-bold mt-1.5 uppercase tracking-tighter">Save</span>
+            </button>
+
+            <button @click="handleShare" class="flex flex-col items-center group">
+              <div class="p-3 bg-white/10 backdrop-blur-md border border-white/5 rounded-full transition-all group-hover:bg-white/20 group-hover:scale-110 active:scale-90 text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                </svg>
+              </div>
+              <span class="text-white/50 text-[10px] font-bold mt-1.5 uppercase tracking-tighter">Share</span>
+            </button>
+
+            <button @click="handleDetails" class="flex flex-col items-center group">
+              <div class="p-3 bg-white/10 backdrop-blur-md border border-white/5 rounded-full transition-all group-hover:bg-white/20 group-hover:scale-110 active:scale-90 text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <span class="text-white/50 text-[10px] font-bold mt-1.5 uppercase tracking-tighter">Details</span>
+            </button>
           </div>
-        </div>
-
-        <!-- Controls (Bottom Right) -->
-        <div class="flex flex-col items-center space-y-6 pb-4 pointer-events-auto">
-          <button @click="handleLike" class="flex flex-col items-center group">
-            <div class="p-3 bg-black/40 rounded-full group-hover:bg-black/60 transition-colors">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white transition-colors" :class="{'text-red-500 fill-red-500': isLiked}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-              </svg>
-            </div>
-            <span class="text-white text-xs mt-1 font-medium drop-shadow-md">{{ listing.likes_count }}</span>
-          </button>
-
-          <button @click="handleSave" class="flex flex-col items-center group">
-            <div class="p-3 bg-black/40 rounded-full group-hover:bg-black/60 transition-colors">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white transition-colors" :class="{'text-yellow-400 fill-yellow-400': isSaved}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-              </svg>
-            </div>
-            <span class="text-white text-xs mt-1 font-medium drop-shadow-md">Save</span>
-          </button>
-          
-          <button class="flex flex-col items-center group mt-2">
-            <div class="p-3 bg-green-500 text-black rounded-full animate-bounce shadow-lg shadow-green-500/50 hover:bg-green-400 transition-colors">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-              </svg>
-            </div>
-          </button>
         </div>
       </div>
     </div>
@@ -149,6 +161,41 @@ const handleSave = async () => {
       router.push('/login')
     }
   }
+}
+
+const handleDetails = () => {
+    // Navigate to product details page
+    router.push(`/products/${props.listing.id}`);
+}
+
+const handleShare = async () => {
+    const shareData = {
+        title: props.listing.title_en,
+        text: `Check out ${props.listing.title_en} on ReelDeal!`,
+        url: `${window.location.origin}/products/${props.listing.id}`,
+    };
+
+    try {
+        if (navigator.share) {
+            await navigator.share(shareData);
+        } else {
+            await navigator.clipboard.writeText(shareData.url);
+            alert('Link copied to clipboard!');
+        }
+    } catch (err) {
+        console.error('Error sharing:', err);
+    }
+}
+
+const handleAddToCart = async () => {
+    try {
+        await feedService.addToCart(props.listing.id, 1);
+        alert('Added to cart!');
+    } catch (error: any) {
+        if (error?.response?.status === 401) {
+            router.push('/login');
+        }
+    }
 }
 
 onUnmounted(() => {

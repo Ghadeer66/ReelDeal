@@ -89,48 +89,48 @@
 }
 
 :root {
-    --background: hsl(0 0% 100%);
-    --foreground: hsl(230 60% 15%);
+    --background: hsl(0 0% 98%);
+    --foreground: hsl(20 10% 5%);
     --card: hsl(0 0% 100%);
-    --card-foreground: hsl(230 60% 15%);
+    --card-foreground: hsl(20 10% 5%);
     --popover: hsl(0 0% 100%);
-    --popover-foreground: hsl(230 60% 15%);
-    --primary: hsl(230 60% 15%);
-    --primary-foreground: hsl(0 0% 98%);
-    --secondary: hsl(42 95% 55%);
-    --secondary-foreground: hsl(230 60% 15%);
+    --popover-foreground: hsl(20 10% 5%);
+    --primary: #4ade80;
+    --primary-foreground: #111;
+    --secondary: #111;
+    --secondary-foreground: #4ade80;
     --muted: hsl(0 0% 96.1%);
     --muted-foreground: hsl(0 0% 45.1%);
-    --accent: hsl(10 90% 60%);
-    --accent-foreground: hsl(0 0% 98%);
+    --accent: #4ade80;
+    --accent-foreground: #111;
     --destructive: hsl(0 84.2% 60.2%);
     --destructive-foreground: hsl(0 0% 98%);
     --border: hsl(0 0% 92.8%);
     --input: hsl(0 0% 89.8%);
-    --ring: hsl(10 90% 60%);
-    --radius: 0.5rem;
+    --ring: #4ade80;
+    --radius: 0.75rem;
 }
 
 .dark {
-    --background: hsl(230 60% 10%);
-    --foreground: hsl(0 0% 98%);
-    --card: hsl(230 60% 12%);
-    --card-foreground: hsl(0 0% 98%);
-    --popover: hsl(230 60% 12%);
-    --popover-foreground: hsl(0 0% 98%);
-    --primary: hsl(0 0% 98%);
-    --primary-foreground: hsl(230 60% 15%);
-    --secondary: hsl(42 95% 45%);
-    --secondary-foreground: hsl(0 0% 98%);
-    --muted: hsl(0 0% 20%);
-    --muted-foreground: hsl(0 0% 63.9%);
-    --accent: hsl(10 90% 60%);
-    --accent-foreground: hsl(0 0% 98%);
-    --destructive: hsl(0 84% 60%);
-    --destructive-foreground: hsl(0 0% 98%);
-    --border: hsl(230 60% 20%);
-    --input: hsl(230 60% 20%);
-    --ring: hsl(10 90% 60%);
+    --background: #1a1a18;
+    --foreground: #ffffff;
+    --card: #22221f;
+    --card-foreground: #ffffff;
+    --popover: #1a1a18;
+    --popover-foreground: #ffffff;
+    --primary: #4ade80;
+    --primary-foreground: #111;
+    --secondary: #111;
+    --secondary-foreground: #4ade80;
+    --muted: rgba(255, 255, 255, 0.15);
+    --muted-foreground: rgba(255, 255, 255, 0.55);
+    --accent: #4ade80;
+    --accent-foreground: #111;
+    --destructive: hsl(0 84.2% 60.2%);
+    --destructive-foreground: #ffffff;
+    --border: rgba(255, 255, 255, 0.1);
+    --input: rgba(255, 255, 255, 0.1);
+    --ring: #4ade80;
 }
 
 @layer base {

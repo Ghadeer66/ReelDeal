@@ -1,51 +1,118 @@
-<script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
-import { Bookmark, Play } from 'lucide-vue-next';
-
-const props = defineProps<{
-    products: any[];
-}>();
-</script>
-
 <template>
-  <Head title="Saved Reels" />
-  <div class="min-h-screen bg-background pb-20">
-    <header class="h-14 flex items-center px-4 border-b border-border sticky top-0 bg-background/90 backdrop-blur-md z-40">
-        <h1 class="font-bold text-xl flex items-center gap-2">
-            <Bookmark class="w-5 h-5 text-secondary" fill="currentColor" />
-            Saved Reels
-        </h1>
-    </header>
-
-    <div v-if="products.length === 0" class="flex flex-col items-center justify-center p-8 mt-20 text-center animate-in fade-in">
-        <div class="w-24 h-24 bg-muted rounded-full flex items-center justify-center mb-6">
-            <Bookmark class="w-10 h-10 text-muted-foreground animate-pulse" />
-        </div>
-        <h2 class="text-2xl font-bold mb-2">No saved reels yet</h2>
-        <p class="text-muted-foreground text-lg">Save reels you like to view them later.</p>
+  <div class="h-full w-full bg-background overflow-hidden flex flex-col pt-14 lg:pt-0">
+    
+    <!-- Header overlay for mobile -->
+    <div class="absolute top-0 left-0 w-full z-20 flex items-center px-4 py-4 bg-gradient-to-b from-black/50 to-transparent">
+      <button @click="router.back()" class="p-2 -ml-2 text-white/70 hover:text-white transition-colors">
+        <ArrowLeft class="w-6 h-6" />
+      </button>
+      <h1 class="text-white font-bold text-lg ml-2 drop-shadow shadow-black">Saved Reels</h1>
     </div>
+    
+    <!-- Scrollable container -->
+    <div 
+      class="h-full w-full overflow-y-scroll snap-y snap-mandatory scroll-smooth hide-scrollbar flex flex-col pb-16"
+      @scroll="handleScroll"
+      ref="scrollContainer"
+    >
+      <ReelCard 
+        v-for="(listing, index) in listings" 
+        :key="listing.id"
+        :listing="listing"
+        :isActive="activeIndex === index"
+        class="h-full w-full max-w-lg mx-auto"
+      />
+      
+      <!-- Empty state -->
+      <div v-if="listings.length === 0 && !loading" class="h-screen w-full flex flex-col items-center justify-center p-8 text-center">
+        <div class="w-24 h-24 bg-white/5 border border-white/10 rounded-full flex items-center justify-center mb-6 text-white/20">
+            <Bookmark class="w-10 h-10" />
+        </div>
+        <h2 class="text-2xl font-black text-white mb-2">Your collection is empty</h2>
+        <p class="text-white/40 text-sm max-w-xs leading-relaxed">Reels you bookmark while browsing will appear here for quick access later.</p>
+        <button @click="router.push('/')" class="mt-8 bg-primary text-primary-foreground font-bold py-3 px-8 rounded-full text-sm active:scale-95 transition-all">
+            Find Something New
+        </button>
+      </div>
 
-    <div v-else class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1 p-1">
-        <Link 
-            v-for="product in products" 
-            :key="product.id" 
-            :href="`/products/${product.id}`"
-            class="relative aspect-[3/4] bg-muted overflow-hidden group animate-in zoom-in-95 fade-in duration-300"
-            :style="{ animationDelay: `${(product.id % 5) * 50}ms` }"
-        >
-            <img v-if="product.media?.[0]" :src="product.media[0].path.startsWith('http') ? product.media[0].path : `/storage/${product.media[0].path}`" class="w-full h-full object-cover transition-transform group-hover:scale-105 duration-500" />
-            
-            <!-- Play Indicator for Video -->
-            <div v-if="product.media?.[0]?.type === 'video'" class="absolute top-2 right-2 flex items-center space-x-1 bg-black/60 backdrop-blur-md px-2 py-1 rounded shadow-sm">
-                 <Play class="w-3 h-3 text-white" fill="currentColor" />
-                 <span class="text-white text-xs font-bold">{{ product.views_count || 0 }}</span>
-            </div>
-            
-            <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-100 flex flex-col justify-end p-3">
-                <p class="text-white font-bold line-clamp-2 text-sm drop-shadow-md mb-0.5">{{ product.title }}</p>
-                <p class="text-accent font-extrabold text-sm drop-shadow-sm">{{ product.price }} {{ product.currency }}</p>
-            </div>
-        </Link>
+      <!-- Loading indicator bounds -->
+      <div v-if="loading" class="h-screen w-full flex items-center justify-center snap-start flex-shrink-0">
+        <Loader2 class="animate-spin h-8 w-8 text-primary" />
+      </div>
+      
+      <!-- End of feed -->
+      <div v-else-if="!hasMore && listings.length > 0" class="h-40 w-full flex flex-col items-center justify-center snap-start flex-shrink-0">
+        <p class="text-white/20 text-[10px] font-black uppercase tracking-[0.2em]">End of Collection</p>
+      </div>
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { ArrowLeft, Bookmark, Loader2 } from 'lucide-vue-next'
+import ReelCard from '@/components/feed/ReelCard.vue'
+import { feedService, type ListingFeedItem } from '@/services/feed.service'
+
+const router = useRouter()
+const listings = ref<ListingFeedItem[]>([])
+const loading = ref(false)
+const hasMore = ref(true)
+const nextCursor = ref<string | null>(null)
+const activeIndex = ref(0)
+const scrollContainer = ref<HTMLElement | null>(null)
+
+let isFetching = false
+
+const loadSaves = async () => {
+  if (isFetching || !hasMore.value) return
+  isFetching = true
+  loading.value = true
+  
+  try {
+    const response = await feedService.getSaves(nextCursor.value)
+    listings.value = [...listings.value, ...response.data]
+    
+    if (response.meta.next_cursor) {
+      nextCursor.value = response.meta.next_cursor
+    } else {
+      hasMore.value = false
+    }
+  } catch (error) {
+    console.error('Failed to load saves:', error)
+  } finally {
+    loading.value = false
+    isFetching = false
+  }
+}
+
+const handleScroll = () => {
+  if (!scrollContainer.value) return
+  
+  const { scrollTop, clientHeight, scrollHeight } = scrollContainer.value
+  
+  const newActiveIndex = Math.round(scrollTop / clientHeight)
+  if (newActiveIndex !== activeIndex.value && newActiveIndex < listings.value.length) {
+    activeIndex.value = newActiveIndex
+  }
+  
+  if (hasMore.value && !isFetching && scrollHeight - (scrollTop + clientHeight) < clientHeight * 2) {
+    loadSaves()
+  }
+}
+
+onMounted(() => {
+  loadSaves()
+})
+</script>
+
+<style scoped>
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+</style>

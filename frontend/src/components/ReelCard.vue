@@ -1,8 +1,9 @@
-<script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
+import { useRouter, RouterLink } from 'vue-router';
 import { Heart, Bookmark, Share2, Info, Plus } from 'lucide-vue-next';
-import { Link, router } from '@inertiajs/vue3';
 import axios from 'axios';
+
+const router = useRouter();
 
 const props = defineProps<{
     product: any;
@@ -77,7 +78,7 @@ const handleBookmark = async () => {
     } catch (e) {
         localBookmarked.value = !localBookmarked.value;
         if ((e as any).response?.status === 401) {
-            router.get('/login');
+            router.push('/login');
         }
     }
 };
@@ -88,6 +89,25 @@ const addToCart = () => {
 
 const openDetails = () => {
     emit('openedDetails', props.product);
+};
+
+const handleShare = async () => {
+    const shareData = {
+        title: props.product.title,
+        text: `Check out ${props.product.title} on ReelDeal!`,
+        url: `${window.location.origin}/products/${props.product.id}`,
+    };
+
+    try {
+        if (navigator.share) {
+            await navigator.share(shareData);
+        } else {
+            await navigator.clipboard.writeText(shareData.url);
+            alert('Link copied to clipboard!');
+        }
+    } catch (err) {
+        console.error('Error sharing:', err);
+    }
 };
 </script>
 
@@ -109,61 +129,60 @@ const openDetails = () => {
                 :src="primaryMedia.path.startsWith('http') ? primaryMedia.path : `/storage/${primaryMedia.path}`" 
                 class="object-cover w-full h-full" 
             />
-            <div v-else class="flex flex-col items-center justify-center w-full h-full bg-gray-900 text-gray-500">
-                <div class="w-16 h-16 bg-gray-800 rounded-full mb-4 animate-pulse"></div>
+            <div v-else class="flex flex-col items-center justify-center w-full h-full bg-neutral-900 text-neutral-500">
+                <div class="w-16 h-16 bg-neutral-800 rounded-full mb-4 animate-pulse"></div>
                 No Media Available
             </div>
         </div>
 
         <!-- Overlays -->
-        <div class="absolute inset-0 z-10 pointer-events-none bg-gradient-to-t from-black/90 via-transparent to-black/20">
-            <div class="flex flex-col justify-end w-full h-full p-4 pb-20 pointer-events-auto">
-                <div class="flex justify-between items-end w-full">
-                    <!-- Product Info -->
-                    <div class="flex-1 pr-12 text-white">
-                        <Link :href="`/products/${product.id}`">
-                            <h2 class="text-xl font-bold line-clamp-2 mb-1 hover:underline drop-shadow-md">{{ product.title }}</h2>
-                        </Link>
-                        <p class="text-accent font-extrabold text-xl mb-3 drop-shadow-md">{{ product.price }} {{ product.currency }}</p>
-                        <div class="flex items-center space-x-2">
-                            <div class="w-8 h-8 rounded-full bg-white/20 backdrop-blur flex items-center justify-center font-bold text-sm">
-                                {{ product.user?.name?.charAt(0) || '?' }}
-                            </div>
-                            <span class="text-sm font-medium drop-shadow-md">{{ product.user?.name || 'Unknown Seller' }}</span>
-                        </div>
-                    </div>
+        <div class="absolute inset-0 z-10 pointer-events-none bg-gradient-to-t from-black/95 via-transparent to-black/30">
+            <div class="flex flex-col justify-end w-full h-full p-6 pb-24 pointer-events-auto max-w-lg mx-auto">
+                <div class="flex flex-col items-start w-full text-white">
+                    <RouterLink :to="`/products/${product.id}`">
+                        <h2 class="text-xl font-extrabold line-clamp-2 mb-1 hover:underline drop-shadow-xl">{{ product.title }}</h2>
+                    </RouterLink>
+                    <p class="text-primary font-black text-2xl mb-4 drop-shadow-xl">{{ product.price }} {{ product.currency }}</p>
+                    <p v-if="product.description" class="text-white/60 text-xs line-clamp-2 mb-6 max-w-[85%] leading-relaxed">
+                        {{ product.description }}
+                    </p>
+                    
+                    <button @click="addToCart" class="w-full bg-primary text-primary-foreground py-3.5 rounded-xl font-bold text-sm shadow-xl shadow-primary/10 flex items-center justify-center gap-2 transition-transform active:scale-95">
+                        <Plus class="w-5 h-5" :stroke-width="3" />
+                        Add to cart
+                    </button>
                 </div>
             </div>
         </div>
 
         <!-- Right Side Actions -->
-        <div class="absolute bottom-24 right-4 z-20 flex flex-col items-center space-y-6">
+        <div class="absolute bottom-32 right-4 z-20 flex flex-col items-center space-y-5">
              <button @click="handleLike" class="flex flex-col items-center group">
-                 <div class="p-3 bg-black/40 backdrop-blur-md rounded-full transition-transform group-hover:scale-110" :class="{'text-accent': isLiked, 'text-white': !isLiked}">
-                     <Heart class="w-7 h-7" :fill="isLiked ? 'currentColor' : 'none'" />
+                 <div class="p-3 bg-white/10 backdrop-blur-md border border-white/5 rounded-full transition-all group-hover:bg-white/20 group-hover:scale-110 active:scale-90" :class="{'text-red-500 bg-red-500/10': isLiked, 'text-white': !isLiked}">
+                     <Heart class="w-6 h-6" :fill="isLiked ? 'currentColor' : 'none'" :stroke-width="isLiked ? 0 : 2" />
                  </div>
-                 <span class="text-white text-xs font-bold mt-1 shadow-sm">{{ localLikes }}</span>
+                 <span class="text-white/50 text-[10px] font-bold mt-1.5 uppercase tracking-tighter">{{ localLikes }}</span>
              </button>
 
              <button @click="handleBookmark" class="flex flex-col items-center group">
-                 <div class="p-3 bg-black/40 backdrop-blur-md rounded-full transition-transform group-hover:scale-110" :class="{'text-secondary': localBookmarked, 'text-white': !localBookmarked}">
-                     <Bookmark class="w-7 h-7" :fill="localBookmarked ? 'currentColor' : 'none'" />
+                 <div class="p-3 bg-white/10 backdrop-blur-md border border-white/5 rounded-full transition-all group-hover:bg-white/20 group-hover:scale-110 active:scale-90" :class="{'text-primary bg-primary/10': localBookmarked, 'text-white': !localBookmarked}">
+                     <Bookmark class="w-6 h-6" :fill="localBookmarked ? 'currentColor' : 'none'" :stroke-width="localBookmarked ? 0 : 2" />
                  </div>
-                 <span class="text-white text-xs font-bold mt-1 shadow-sm">Save</span>
+                 <span class="text-white/50 text-[10px] font-bold mt-1.5 uppercase tracking-tighter">Save</span>
+             </button>
+
+             <button @click="handleShare" class="flex flex-col items-center group">
+                 <div class="p-3 bg-white/10 backdrop-blur-md border border-white/5 rounded-full transition-all group-hover:bg-white/20 group-hover:scale-110 active:scale-90 text-white">
+                     <Share2 class="w-6 h-6" />
+                 </div>
+                 <span class="text-white/50 text-[10px] font-bold mt-1.5 uppercase tracking-tighter">Share</span>
              </button>
 
              <button @click="openDetails" class="flex flex-col items-center group">
-                 <div class="p-3 bg-black/40 backdrop-blur-md rounded-full transition-transform group-hover:scale-110 text-white">
-                     <Info class="w-7 h-7" />
+                 <div class="p-3 bg-white/10 backdrop-blur-md border border-white/5 rounded-full transition-all group-hover:bg-white/20 group-hover:scale-110 active:scale-90 text-white">
+                     <Info class="w-6 h-6" />
                  </div>
-                 <span class="text-white text-xs font-bold mt-1 shadow-sm">Details</span>
-             </button>
-             
-             <button @click="addToCart" class="flex flex-col items-center group mt-4">
-                 <div class="p-3 bg-accent text-accent-foreground backdrop-blur-md rounded-full shadow-lg transition-transform group-active:scale-95">
-                     <Plus class="w-7 h-7" />
-                 </div>
-                 <span class="text-white text-xs font-bold mt-1 shadow-sm">Cart</span>
+                 <span class="text-white/50 text-[10px] font-bold mt-1.5 uppercase tracking-tighter">Details</span>
              </button>
         </div>
     </div>

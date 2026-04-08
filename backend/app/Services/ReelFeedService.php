@@ -31,16 +31,45 @@ class ReelFeedService
         return $query->cursorPaginate($perPage);
     }
 
-    public function searchReels($searchTerm, $perPage = 5)
+    public function searchReels($searchTerm, $perPage = 5, array $filters = [])
     {
         $query = Listing::with(['user', 'category', 'images'])
-            ->where('status', ListingStatus::Live->value)
-            ->where(function ($q) use ($searchTerm) {
+            ->where('status', ListingStatus::Live->value);
+
+        if (!empty($searchTerm)) {
+            $query->where(function ($q) use ($searchTerm) {
                 $q->where('title_en', 'like', "%{$searchTerm}%")
                     ->orWhere('title_ar', 'like', "%{$searchTerm}%")
                     ->orWhere('description_en', 'like', "%{$searchTerm}%");
-            })
-            ->latest();
+            });
+        }
+
+        // Apply filters
+        if (!empty($filters['category_id'])) {
+            $query->where('category_id', $filters['category_id']);
+        }
+
+        if (!empty($filters['min_price'])) {
+            $query->where('price', '>=', $filters['min_price']);
+        }
+
+        if (!empty($filters['max_price'])) {
+            $query->where('price', '<=', $filters['max_price']);
+        }
+
+        if (!empty($filters['condition'])) {
+            if ($filters['condition'] === 'new') {
+                $query->where('condition', 'new');
+            } else if ($filters['condition'] === 'used') {
+                $query->whereIn('condition', ['like_new', 'good', 'fair']);
+            }
+        }
+
+        if (!empty($filters['location'])) {
+            $query->where('location', 'like', "%{$filters['location']}%");
+        }
+
+        $query->latest();
 
         return $query->cursorPaginate($perPage);
     }

@@ -22,6 +22,26 @@ const router = createRouter({
             path: '/register/interests',
             name: 'interests',
             component: () => import('../pages/InterestsPage.vue')
+        },
+        {
+            path: '/search',
+            name: 'search',
+            component: () => import('../pages/Search.vue')
+        },
+        {
+            path: '/cart',
+            name: 'cart',
+            component: () => import('../pages/Cart.vue')
+        },
+        {
+            path: '/profile',
+            name: 'profile',
+            component: () => import('../pages/settings/Profile.vue')
+        },
+        {
+            path: '/saves',
+            name: 'saves',
+            component: () => import('../pages/Bookmarks.vue')
         }
     ]
 })

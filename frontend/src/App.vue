@@ -1,10 +1,21 @@
 <template>
-  <div>
-    <!-- Optional: Add AppHeader / BottomNav based on designs -->
-    <router-view></router-view>
+  <div class="flex flex-col min-h-screen">
+    <div class="flex-1">
+      <router-view></router-view>
+    </div>
+    <BottomTabBar v-if="showBottomNav" />
   </div>
 </template>
 
 <script setup lang="ts">
-// Main entry for the application
+import { computed } from 'vue';
+import { useRoute } from 'vue-router';
+import BottomTabBar from '@/components/BottomTabBar.vue';
+
+const route = useRoute();
+// Only show bottom nav on main app routes, not on auth or onboarding
+const showBottomNav = computed(() => {
+    const authRoutes = ['/login', '/register', '/onboarding'];
+    return !authRoutes.includes(route.path);
+});
 </script>
