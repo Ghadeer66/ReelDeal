@@ -1,0 +1,390 @@
+import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../wayfinder'
+/**
+* @see \App\Http\Controllers\CartController::index
+* @see app/Http/Controllers/CartController.php:16
+* @route '/cart'
+*/
+export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: index.url(options),
+    method: 'get',
+})
+
+index.definition = {
+    methods: ["get","head"],
+    url: '/cart',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \App\Http\Controllers\CartController::index
+* @see app/Http/Controllers/CartController.php:16
+* @route '/cart'
+*/
+index.url = (options?: RouteQueryOptions) => {
+    return index.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\CartController::index
+* @see app/Http/Controllers/CartController.php:16
+* @route '/cart'
+*/
+index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: index.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\CartController::index
+* @see app/Http/Controllers/CartController.php:16
+* @route '/cart'
+*/
+index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: index.url(options),
+    method: 'head',
+})
+
+/**
+* @see \App\Http\Controllers\CartController::index
+* @see app/Http/Controllers/CartController.php:16
+* @route '/cart'
+*/
+const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\CartController::index
+* @see app/Http/Controllers/CartController.php:16
+* @route '/cart'
+*/
+indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\CartController::index
+* @see app/Http/Controllers/CartController.php:16
+* @route '/cart'
+*/
+indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+index.form = indexForm
+
+/**
+* @see \App\Http\Controllers\CartController::store
+* @see app/Http/Controllers/CartController.php:33
+* @route '/cart'
+*/
+export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: store.url(options),
+    method: 'post',
+})
+
+store.definition = {
+    methods: ["post"],
+    url: '/cart',
+} satisfies RouteDefinition<["post"]>
+
+/**
+* @see \App\Http\Controllers\CartController::store
+* @see app/Http/Controllers/CartController.php:33
+* @route '/cart'
+*/
+store.url = (options?: RouteQueryOptions) => {
+    return store.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\CartController::store
+* @see app/Http/Controllers/CartController.php:33
+* @route '/cart'
+*/
+store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: store.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\CartController::store
+* @see app/Http/Controllers/CartController.php:33
+* @route '/cart'
+*/
+const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: store.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\CartController::store
+* @see app/Http/Controllers/CartController.php:33
+* @route '/cart'
+*/
+storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: store.url(options),
+    method: 'post',
+})
+
+store.form = storeForm
+
+/**
+* @see \App\Http\Controllers\CartController::update
+* @see app/Http/Controllers/CartController.php:61
+* @route '/cart/{cart}'
+*/
+export const update = (args: { cart: string | number } | [cart: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+    url: update.url(args, options),
+    method: 'put',
+})
+
+update.definition = {
+    methods: ["put","patch"],
+    url: '/cart/{cart}',
+} satisfies RouteDefinition<["put","patch"]>
+
+/**
+* @see \App\Http\Controllers\CartController::update
+* @see app/Http/Controllers/CartController.php:61
+* @route '/cart/{cart}'
+*/
+update.url = (args: { cart: string | number } | [cart: string | number ] | string | number, options?: RouteQueryOptions) => {
+    if (typeof args === 'string' || typeof args === 'number') {
+        args = { cart: args }
+    }
+
+    if (Array.isArray(args)) {
+        args = {
+            cart: args[0],
+        }
+    }
+
+    args = applyUrlDefaults(args)
+
+    const parsedArgs = {
+        cart: args.cart,
+    }
+
+    return update.definition.url
+            .replace('{cart}', parsedArgs.cart.toString())
+            .replace(/\/+$/, '') + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\CartController::update
+* @see app/Http/Controllers/CartController.php:61
+* @route '/cart/{cart}'
+*/
+update.put = (args: { cart: string | number } | [cart: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+    url: update.url(args, options),
+    method: 'put',
+})
+
+/**
+* @see \App\Http\Controllers\CartController::update
+* @see app/Http/Controllers/CartController.php:61
+* @route '/cart/{cart}'
+*/
+update.patch = (args: { cart: string | number } | [cart: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
+    url: update.url(args, options),
+    method: 'patch',
+})
+
+/**
+* @see \App\Http\Controllers\CartController::update
+* @see app/Http/Controllers/CartController.php:61
+* @route '/cart/{cart}'
+*/
+const updateForm = (args: { cart: string | number } | [cart: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PUT',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\CartController::update
+* @see app/Http/Controllers/CartController.php:61
+* @route '/cart/{cart}'
+*/
+updateForm.put = (args: { cart: string | number } | [cart: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PUT',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\CartController::update
+* @see app/Http/Controllers/CartController.php:61
+* @route '/cart/{cart}'
+*/
+updateForm.patch = (args: { cart: string | number } | [cart: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PATCH',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+update.form = updateForm
+
+/**
+* @see \App\Http\Controllers\CartController::destroy
+* @see app/Http/Controllers/CartController.php:76
+* @route '/cart/{cart}'
+*/
+export const destroy = (args: { cart: string | number } | [cart: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+    url: destroy.url(args, options),
+    method: 'delete',
+})
+
+destroy.definition = {
+    methods: ["delete"],
+    url: '/cart/{cart}',
+} satisfies RouteDefinition<["delete"]>
+
+/**
+* @see \App\Http\Controllers\CartController::destroy
+* @see app/Http/Controllers/CartController.php:76
+* @route '/cart/{cart}'
+*/
+destroy.url = (args: { cart: string | number } | [cart: string | number ] | string | number, options?: RouteQueryOptions) => {
+    if (typeof args === 'string' || typeof args === 'number') {
+        args = { cart: args }
+    }
+
+    if (Array.isArray(args)) {
+        args = {
+            cart: args[0],
+        }
+    }
+
+    args = applyUrlDefaults(args)
+
+    const parsedArgs = {
+        cart: args.cart,
+    }
+
+    return destroy.definition.url
+            .replace('{cart}', parsedArgs.cart.toString())
+            .replace(/\/+$/, '') + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\CartController::destroy
+* @see app/Http/Controllers/CartController.php:76
+* @route '/cart/{cart}'
+*/
+destroy.delete = (args: { cart: string | number } | [cart: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+    url: destroy.url(args, options),
+    method: 'delete',
+})
+
+/**
+* @see \App\Http\Controllers\CartController::destroy
+* @see app/Http/Controllers/CartController.php:76
+* @route '/cart/{cart}'
+*/
+const destroyForm = (args: { cart: string | number } | [cart: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: destroy.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'DELETE',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\CartController::destroy
+* @see app/Http/Controllers/CartController.php:76
+* @route '/cart/{cart}'
+*/
+destroyForm.delete = (args: { cart: string | number } | [cart: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: destroy.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'DELETE',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+destroy.form = destroyForm
+
+/**
+* @see \App\Http\Controllers\CartController::checkout
+* @see app/Http/Controllers/CartController.php:90
+* @route '/checkout'
+*/
+export const checkout = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: checkout.url(options),
+    method: 'post',
+})
+
+checkout.definition = {
+    methods: ["post"],
+    url: '/checkout',
+} satisfies RouteDefinition<["post"]>
+
+/**
+* @see \App\Http\Controllers\CartController::checkout
+* @see app/Http/Controllers/CartController.php:90
+* @route '/checkout'
+*/
+checkout.url = (options?: RouteQueryOptions) => {
+    return checkout.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\CartController::checkout
+* @see app/Http/Controllers/CartController.php:90
+* @route '/checkout'
+*/
+checkout.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: checkout.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\CartController::checkout
+* @see app/Http/Controllers/CartController.php:90
+* @route '/checkout'
+*/
+const checkoutForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: checkout.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\CartController::checkout
+* @see app/Http/Controllers/CartController.php:90
+* @route '/checkout'
+*/
+checkoutForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: checkout.url(options),
+    method: 'post',
+})
+
+checkout.form = checkoutForm
+
+const CartController = { index, store, update, destroy, checkout }
+
+export default CartController
